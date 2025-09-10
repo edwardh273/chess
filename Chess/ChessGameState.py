@@ -60,8 +60,10 @@ class GameState:
         # update the king's location
         if move.pieceMoved == 'wK':
             self.whiteKingLocation = (move.endCol, move.endRow)
+            print(self.whiteKingLocation)
         elif move.pieceMoved == 'bK':
             self.blackKingLocation = (move.endCol, move.endRow)
+            print(self.blackKingLocation)
 
 
         if move.isPawnPromotion:
@@ -87,13 +89,13 @@ class GameState:
             if c - 1 >= 0:  # capturing left (ensures not off board)
                 if self.board[r - 1][c - 1][0] =='b':
                     moves.append(Move((c, r),(c-1, r-1), self.board))
-                elif (c-1, r-1) == self.enpassantPossible:
+                elif (c-1, r-1) == self.enpassantPossible and self.board[r][c-1][0] == 'b':
                     print(f"Adding en passant move: from ({c},{r}) to ({c-1},{r-1})")
                     moves.append(Move((c, r), (c-1, r-1), self.board, isEnpassantMove=True))
             if c + 1 <= 7:  # capturing right
                 if self.board[r - 1][c + 1][0] =='b':
                     moves.append(Move((c, r),(c+1, r-1), self.board))
-                elif (c+1, r-1) == self.enpassantPossible:
+                elif (c+1, r-1) == self.enpassantPossible and self.board[r][c+1][0] == 'b':
                     print(f"Adding en passant move: from ({c},{r}) to ({c+1},{r-1})")
                     moves.append(Move((c, r), (c+1, r-1), self.board, isEnpassantMove=True))
 
@@ -105,13 +107,13 @@ class GameState:
             if c - 1 >= 0:  # capturing left
                 if self.board[r + 1][c - 1][0] =='w':
                     moves.append(Move((c, r),(c-1, r+1), self.board))
-                elif (c-1, r+1) == self.enpassantPossible:
+                elif (c-1, r+1) == self.enpassantPossible and self.board[r][c-1][0] == 'w':
                     print(f"Adding en passant move: from ({c},{r}) to ({c - 1},{r + 1})")
                     moves.append(Move((c, r), (c-1, r+1), self.board, isEnpassantMove=True))
             if c + 1 <= 7:  # capturing right
                 if self.board[r + 1][c + 1][0] =='w':
                     moves.append(Move((c, r),(c+1, r+1), self.board))
-                elif (c+1, r+1) == self.enpassantPossible:
+                elif (c+1, r+1) == self.enpassantPossible and self.board[r][c+1][0] == 'w':
                     print(f"Adding en passant move: from ({c},{r}) to ({c+1},{r+1})")
                     moves.append(Move((c, r), (c+1, r+1), self.board, isEnpassantMove=True))
 
