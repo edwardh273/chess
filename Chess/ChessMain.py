@@ -25,9 +25,14 @@ def main():
     running = True
 
     # setup variables
-    gs = GameState()  # initialize the GameState
+    moveMade = False
+    gs = GameState()  # initialize the GameState, whiteToMove = True
+    print("white to move: " + str(gs.whiteToMove))
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
+
+
+    allMoves = gs.getAllPossibleMoves()
 
     while running:
         for e in p.event.get():
@@ -57,13 +62,21 @@ def main():
                 if len(playerClicks) == 2:  # if a user has made their second click, update the board and clear playerClicks
                     print("2 clicks: attempt move")
                     moveAttempt = Move(playerClicks[0], playerClicks[1], gs.board)  # creates object of class Move(startSq, endSq, board)
-                    gs.makeMove(moveAttempt)
-                    sqSelected = ()
-                    playerClicks = []
-                    print([move.moveID for move in gs.moveLog])
-                    print(sqSelected)
-                    print(playerClicks)
+                    for i in range(len(allMoves)):
+                        if moveAttempt == allMoves[i]:  # if move is in all moves, make move, change moveMade variable, clear playerClicks.
+                            gs.makeMove(moveAttempt)
+                            print([move.moveID for move in gs.moveLog])
+                            moveMade = True
+                            print("white to move: " + str(gs.whiteToMove))
+                            sqSelected = ()
+                            playerClicks = []
+                    if not moveMade:  # if len(playerClicks == 2) but move not a valid move, clear playerClicks
+                        sqSelected = ()
+                        playerClicks = []
 
+        if moveMade:  # only calculate new moves after each turn, not each frame.
+            allMoves = gs.getAllPossibleMoves()
+            moveMade = False  # set back to False
 
         drawGameState(screen, gs)  # can I delay this to once every move made?
         clock.tick(MAX_FPS)  # sets frame rate of game, is called once per frame.
