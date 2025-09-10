@@ -25,11 +25,39 @@ def main():
 
     # setup variables
     gs = ChessEngine.GameState()  # initialize the GameState
+    sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
+    playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
 
     while running:
         for e in p.event.get():
+
             if e.type == p.QUIT:
                 running = False
+
+            elif e.type == p.MOUSEBUTTONDOWN:
+                location = p.mouse.get_pos()  # (col, row): (0,0)==top left;   (col=0, row=7)==bottom left;     (7, 7)==bottom right
+                col = location[0] // SQ_SIZE
+                row = location[1] // SQ_SIZE
+
+                if sqSelected == (col, row):  # the user clicked  the same square twice
+                    sqSelected = ()  # deselect
+                    playerClicks = []  # reset
+                    print("user clicked same square twice, reset playerClicks")
+                    print(sqSelected)
+                    print(playerClicks)
+
+                else:
+                    sqSelected = (col, row)
+                    playerClicks.append(sqSelected)
+                    print("player clicked square {} {} {}".format(col, row, sqSelected))
+                    print(playerClicks)
+
+                if len(playerClicks) == 2:  # if a user has made their second click, update the board and clear playerClicks
+                    print("2 clicks: attempt move")
+                    sqSelected = ()
+                    playerClicks = []
+                    print(sqSelected)
+                    print(playerClicks)
 
 
         drawGameState(screen, gs)  # can I delay this to once every move made?
