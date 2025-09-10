@@ -3,7 +3,8 @@ This is the main driver file.  It will be responsible for handling user input an
 """
 import pygame as p
 import os
-import ChessEngine
+from ChessGameState import GameState
+from Move import Move
 
 WIDTH = HEIGHT = 512
 DIMENSION = 8  # dimensions of chess board = 8x8
@@ -24,7 +25,7 @@ def main():
     running = True
 
     # setup variables
-    gs = ChessEngine.GameState()  # initialize the GameState
+    gs = GameState()  # initialize the GameState
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
 
@@ -35,6 +36,7 @@ def main():
                 running = False
 
             elif e.type == p.MOUSEBUTTONDOWN:
+                # pygame .get_pos is opposite to how you slice the array of the gs.board
                 location = p.mouse.get_pos()  # (col, row): (0,0)==top left;   (col=0, row=7)==bottom left;     (7, 7)==bottom right
                 col = location[0] // SQ_SIZE
                 row = location[1] // SQ_SIZE
@@ -54,6 +56,8 @@ def main():
 
                 if len(playerClicks) == 2:  # if a user has made their second click, update the board and clear playerClicks
                     print("2 clicks: attempt move")
+                    moveAttempt = Move(playerClicks[0], playerClicks[1], gs.board)  # creates object of class Move(startSq, endSq, board)
+                    gs.makeMove(moveAttempt)
                     sqSelected = ()
                     playerClicks = []
                     print(sqSelected)
