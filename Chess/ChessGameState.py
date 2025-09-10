@@ -50,7 +50,11 @@ class GameState:
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move)  # log the move to undo later.
 
+        if move.isPawnPromotion:
+            self.board[move.endRow][move.endCol] = move.pieceMoved[0] + 'Q'
+
         self.whiteToMove = not self.whiteToMove  # swap players of the gameState
+
 
 
     """

@@ -73,6 +73,7 @@ def main():
                     if not moveMade:  # if len(playerClicks == 2) but move not a valid move, clear playerClicks
                         sqSelected = ()
                         playerClicks = []
+                        print(playerClicks)
 
         if moveMade:  # only calculate new moves after each turn, not each frame.
             allMoves = gs.getAllPossibleMoves()

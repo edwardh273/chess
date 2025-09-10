@@ -14,6 +14,10 @@ class Move:
 
         self.moveID = f"{self.startCol:01d}{self.startRow:01d}{self.endCol:01d}{self.endRow:01d}"
 
+        self.isPawnPromotion = (self.pieceMoved == 'wp' and self.endRow == 0) or (self.pieceMoved == 'bp' and self.endRow == 7)
+
+
+
     """
     Overriding the equals method. Only needed as we are using a class, would not be needed if we used strings, ints etc.
     """
