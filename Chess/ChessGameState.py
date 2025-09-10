@@ -26,6 +26,8 @@ class GameState:
         # initialise variables to store game data
         self.whiteToMove = True
         self.moveLog = []
+        self.checkMate = False
+        self.staleMate = False
 
         self.enpassantPossible = ()
 
@@ -50,7 +52,11 @@ class GameState:
     All moves considering check
     """
     def getValidMoves(self):
+        tempCastleRights = CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs)
+        tmpEnpassantPossible = self.enpassantPossible # tuples are immutable so we are grabbing the value of it, not a reference to that object.
+
         moves = self.getAllPossibleMoves()
+        print([move.moveID for move in moves])
 
         # to generate castle moves
         if self.whiteToMove:
@@ -58,8 +64,72 @@ class GameState:
         else:
             self.getCastleMoves(self.blackKingLocation[1], self.blackKingLocation[0], moves)
 
+        # remove moves that leave you in check
+        for i in range(len(moves) -1, -1, -1):  # When removing from a list, go backwards through that list, up to (not including) -1.
+            self.makeMove(moves[i])  # make move, switch to black's perspective.
+            self.whiteToMove = not self.whiteToMove  # flip back to white's perspective for inCheck function
+            if self.inCheck():
+                moves.remove(moves[i])  # if in check, remove that move from all possible moves
+            self.whiteToMove = not self.whiteToMove  # back to black's perspective
+            self.undoMove()  # back to white's perspective
+
+        if len(moves) == 0:  # either checkmate or stalemate
+            if self.inCheck():
+                self.checkMate = True
+                print('Checkmate')
+            else:
+                self.staleMate = True
+                print('Stalemate')
+        else:
+            self.checkMate = False
+            self.staleMate = False
+        print("after removing invalid moves:")
         print([move.moveID for move in moves])
+
+        self.enpassantPossible = tmpEnpassantPossible
+        self.currentCastlingRights = tempCastleRights
+
         return moves
+
+
+    """
+    Undo the last move made
+    """
+    def undoMove(self):
+        if len(self.moveLog) != 0:  # make sure that there is a move to undo
+            move = self.moveLog.pop()
+            self.board[move.startRow][move.startCol] = move.pieceMoved
+            self.board[move.endRow][move.endCol] = move.pieceCaptured
+            #update king's location
+            if move.pieceMoved == 'wK':
+                self.whiteKingLocation = (move.startCol, move.startRow)
+            elif move.pieceMoved == 'bK':
+                self.blackKingLocation = (move.startCol, move.startRow)
+
+            self.whiteToMove = not self.whiteToMove #swap players back
+
+            # undo enpassant
+            if move.isEnpassantMove:
+                self.board[move.endRow][move.endCol] = '--' # leave landing sq blank
+                self.board[move.startRow][move.endCol] = move.pieceCaptured
+                self.enpassantPossible = (move.endCol, move.endRow)
+            # undo a 2 sq pawn advance
+            if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
+                self.enpassantPossible = ()
+
+            # undo castling rights
+            self.castleRightsLog.pop() # get rid of castle rights from move we are undoing.
+            self.currentCastlingRights = self.castleRightsLog[-1]
+
+            # undo castle move
+            if move.isCastleMove:
+                if move.endCol - move.startCol == 2:  # kingside
+                    self.board[move.endRow][move.endCol - 1] = self.board[move.endRow][move.endCol + 1]
+                    self.board[move.endRow][move.endCol + 1] = "--"  # remove the old rook
+
+                elif move.endCol - move.startCol == - 2:  # queenside
+                    self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 2]
+                    self.board[move.endRow][move.endCol - 2] = "--"  # remove the old rook
 
 
     """
@@ -140,6 +210,16 @@ class GameState:
                     self.currentCastlingRights.bqs = False
                 elif move.endCol == 7:
                     self.currentCastlingRights.bks = False
+
+
+    """
+    Determines whether the CURRENT player is in check.  Returns True, False
+    """
+    def inCheck(self):
+        if self.whiteToMove:
+            return self.squareUnderAttack(self.whiteKingLocation[1], self.whiteKingLocation[0])  # (col, row) -> r, c
+        else:
+            return self.squareUnderAttack(self.blackKingLocation[1], self.blackKingLocation[0])
 
 
     """
