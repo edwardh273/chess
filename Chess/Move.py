@@ -12,7 +12,7 @@ class Move:
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
 
-        self.moveID = self.startCol * 1000 + self.startRow * 100 + self.endCol * 10 + self.endRow
+        self.moveID = f"{self.startCol:01d}{self.startRow:01d}{self.endCol:01d}{self.endRow:01d}"
 
     """
     Overriding the equals method. Only needed as we are using a class, would not be needed if we used strings, ints etc.

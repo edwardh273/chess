@@ -60,6 +60,7 @@ def main():
                     gs.makeMove(moveAttempt)
                     sqSelected = ()
                     playerClicks = []
+                    print([move.moveID for move in gs.moveLog])
                     print(sqSelected)
                     print(playerClicks)
 
