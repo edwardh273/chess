@@ -24,6 +24,8 @@ class GameState:
         self.whiteToMove = True
         self.moveLog = []
 
+        self.enpassantPossible = ()
+
 
 
     """
@@ -46,7 +48,10 @@ class GameState:
     Takes a Move as a parameter and executes it.  After making move, changes White to move parameter
     """
     def makeMove(self, move):
+
         self.board[move.startRow][move.startCol] = "--"
+        if move.isEnpassantMove:
+            self.board[move.startRow][move.endCol] = "--"  # capturing the pawn
         self.board[move.endRow][move.endCol] = move.pieceMoved
         self.moveLog.append(move)  # log the move to undo later.
 
@@ -55,6 +60,10 @@ class GameState:
 
         self.whiteToMove = not self.whiteToMove  # swap players of the gameState
 
+        if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:  # if a pawn moves 2 squares
+            self.enpassantPossible = (move.startCol, (move.startRow + move.endRow) // 2)  # enpassant possible to the square where the pawn would have moved if it had only moved 1 square.
+            print("enpassant possible: " + str(self.enpassantPossible))
+
 
 
     """
@@ -62,16 +71,23 @@ class GameState:
     """
     def getPawnMoves(self, r, c, moves):
         if self.whiteToMove:  # white pawn moves
+
             if self.board[r - 1][c] == "--":  # moving forwards
                 moves.append(Move((c, r),(c, r-1), self.board))
-                if r == 6 and self.board[r-2][c] == "--":  # move 2 squares forward
+                if r == 6 and self.board[r - 2][c] == "--":  # move 2 squares forward
                     moves.append(Move((c, r),(c, r-2), self.board))
             if c - 1 >= 0:  # capturing left (ensures not off board)
                 if self.board[r - 1][c - 1][0] =='b':
                     moves.append(Move((c, r),(c-1, r-1), self.board))
+                elif (c-1, r-1) == self.enpassantPossible:
+                    print(f"Adding en passant move: from ({c},{r}) to ({c-1},{r-1})")
+                    moves.append(Move((c, r), (c-1, r-1), self.board, isEnpassantMove=True))
             if c + 1 <= 7:  # capturing right
                 if self.board[r - 1][c + 1][0] =='b':
                     moves.append(Move((c, r),(c+1, r-1), self.board))
+                elif (c+1, r-1) == self.enpassantPossible:
+                    print(f"Adding en passant move: from ({c},{r}) to ({c+1},{r-1})")
+                    moves.append(Move((c, r), (c+1, r-1), self.board, isEnpassantMove=True))
 
         else:  # black pawn moves
             if self.board[r + 1][c] == "--":  # moving forwards
@@ -81,8 +97,14 @@ class GameState:
             if c - 1 >= 0:  # capturing left
                 if self.board[r + 1][c - 1][0] =='w':
                     moves.append(Move((c, r),(c-1, r+1), self.board))
+                elif (c-1, r+1) == self.enpassantPossible:
+                    print(f"Adding en passant move: from ({c},{r}) to ({c - 1},{r + 1})")
+                    moves.append(Move((c, r), (c-1, r+1), self.board, isEnpassantMove=True))
             if c + 1 <= 7:  # capturing right
                 if self.board[r + 1][c + 1][0] =='w':
                     moves.append(Move((c, r),(c+1, r+1), self.board))
+                elif (c+1, r+1) == self.enpassantPossible:
+                    print(f"Adding en passant move: from ({c},{r}) to ({c+1},{r+1})")
+                    moves.append(Move((c, r), (c+1, r+1), self.board, isEnpassantMove=True))
 
 

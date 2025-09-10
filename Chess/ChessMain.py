@@ -27,6 +27,7 @@ def main():
     # setup variables
     moveMade = False
     gs = GameState()  # initialize the GameState, whiteToMove = True
+    print()
     print("white to move: " + str(gs.whiteToMove))
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
@@ -50,23 +51,22 @@ def main():
                     sqSelected = ()  # deselect
                     playerClicks = []  # reset
                     print("user clicked same square twice, reset playerClicks")
-                    print(sqSelected)
-                    print(playerClicks)
 
                 else:
                     sqSelected = (col, row)
                     playerClicks.append(sqSelected)
-                    print("player clicked square {} {} {}".format(col, row, sqSelected))
-                    print(playerClicks)
+                    print("player clicked square {}".format(sqSelected))
 
                 if len(playerClicks) == 2:  # if a user has made their second click, update the board and clear playerClicks
-                    print("2 clicks: attempt move")
+                    print("2 clicks: attempt move:")
+                    print(playerClicks)
                     moveAttempt = Move(playerClicks[0], playerClicks[1], gs.board)  # creates object of class Move(startSq, endSq, board)
                     for i in range(len(allMoves)):
                         if moveAttempt == allMoves[i]:  # if move is in all moves, make move, change moveMade variable, clear playerClicks.
-                            gs.makeMove(moveAttempt)
+                            gs.makeMove(allMoves[i])
                             print([move.moveID for move in gs.moveLog])
                             moveMade = True
+                            print()
                             print("white to move: " + str(gs.whiteToMove))
                             sqSelected = ()
                             playerClicks = []
@@ -82,6 +82,15 @@ def main():
         drawGameState(screen, gs)  # can I delay this to once every move made?
         clock.tick(MAX_FPS)  # sets frame rate of game, is called once per frame.
         p.display.flip()  # updates the full display Surface to the screen.
+
+
+
+
+
+
+
+
+
 
 
 
