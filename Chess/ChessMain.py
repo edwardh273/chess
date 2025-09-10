@@ -33,7 +33,7 @@ def main():
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
 
 
-    allMoves = gs.getAllPossibleMoves()
+    allMoves = gs.getValidMoves()
 
     while running:
         for e in p.event.get():
@@ -76,7 +76,7 @@ def main():
                         print(playerClicks)
 
         if moveMade:  # only calculate new moves after each turn, not each frame.
-            allMoves = gs.getAllPossibleMoves()
+            allMoves = gs.getValidMoves()
             moveMade = False  # set back to False
 
         drawGameState(screen, gs)  # can I delay this to once every move made?
