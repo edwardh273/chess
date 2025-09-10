@@ -143,10 +143,8 @@ class GameState:
         # update the king's location
         if move.pieceMoved == 'wK':
             self.whiteKingLocation = (move.endCol, move.endRow)
-            print("white king location: " + str(self.whiteKingLocation))
         elif move.pieceMoved == 'bK':
             self.blackKingLocation = (move.endCol, move.endRow)
-            print("black king location: " + str(self.blackKingLocation))
 
         # pawn promotion
         if move.isPawnPromotion:
@@ -155,7 +153,6 @@ class GameState:
         # enpassant
         if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:  # if a pawn moves 2 squares
             self.enpassantPossible = (move.startCol, (move.startRow + move.endRow) // 2)  # enpassant possible to the square where the pawn would have moved if it had only moved 1 square.
-            print("enpassant possible: " + str(self.enpassantPossible))
         if move.isEnpassantMove:
             self.board[move.startRow][move.endCol] = "--"  # capturing the pawn
 

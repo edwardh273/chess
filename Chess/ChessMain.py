@@ -75,6 +75,14 @@ def main():
                         playerClicks = []
                         print(playerClicks)
 
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z: #undo when 'z' is pressed.
+                    gs.undoMove()
+                    print('Undone move')
+                    print([move.moveID for move in gs.moveLog])
+                    moveMade = True
+
+
         if moveMade:  # only calculate new moves after each turn, not each frame.
             allMoves = gs.getValidMoves()
             moveMade = False  # set back to False
