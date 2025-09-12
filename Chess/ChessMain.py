@@ -34,7 +34,7 @@ def main():
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
     playerOne = True  # if a human is playing white, then True.  If AI is playing, then false
-    playerTwo = False  # same as above, but for black.
+    playerTwo = True  # same as above, but for black.
 
     validMoves = gs.getValidMoves()
 
@@ -84,11 +84,11 @@ def main():
                                 print(playerClicks)
 
             elif e.type == p.KEYDOWN:
-                if e.key == p.K_z: #undo when 'z' is pressed.
+                if e.key == p.K_z and len(gs.moveLog) > 0: #undo when 'z' is pressed.
                     gs.undoMove()
                     print('Undone move')
                     print([move.moveID for move in gs.moveLog])
-                    moveMade = True
+                    validMoves = gs.getValidMoves()
 
         # ChessAI logic
         if not isHumanTurn:
