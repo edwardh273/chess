@@ -4,7 +4,7 @@ This is the main driver file.  It will be responsible for handling user input an
 import pygame as p
 import os
 from ChessGameState import GameState
-from ChessAI import findRandomMove, findBestMove
+from ChessAI import findRandomMove, findBestMove, findBestMoveMinMax
 from Move import Move
 
 WIDTH = HEIGHT = 768
@@ -95,7 +95,7 @@ def main():
 
         # ChessAI logic
         if not isHumanTurn and not gameOver:
-            AIMove = findBestMove(gs, validMoves)
+            AIMove = findBestMoveMinMax(gs, validMoves)
             gs.makeMove(AIMove)
             moveMade = True
 
