@@ -56,7 +56,6 @@ class GameState:
         tmpEnpassantPossible = self.enpassantPossible # tuples are immutable so we are grabbing the value of it, not a reference to that object.
 
         moves = self.getAllPossibleMoves()
-        print([move.moveID for move in moves])
 
         # to generate castle moves
         if self.whiteToMove:
@@ -83,8 +82,6 @@ class GameState:
         else:
             self.checkMate = False
             self.staleMate = False
-        print("after removing invalid moves:")
-        print([move.moveID for move in moves])
 
         self.enpassantPossible = tmpEnpassantPossible
         self.currentCastlingRights = tempCastleRights
@@ -117,19 +114,23 @@ class GameState:
             if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:
                 self.enpassantPossible = ()
 
-            # undo castling rights
-            self.castleRightsLog.pop() # get rid of castle rights from move we are undoing.
-            self.currentCastlingRights = self.castleRightsLog[-1]
-
-            # undo castle move
+            # move rook back if a castle move
             if move.isCastleMove:
                 if move.endCol - move.startCol == 2:  # kingside
-                    self.board[move.endRow][move.endCol - 1] = self.board[move.endRow][move.endCol + 1]
-                    self.board[move.endRow][move.endCol + 1] = "--"  # remove the old rook
+                    self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 1]
+                    self.board[move.endRow][move.endCol - 1] = "--"  # remove the old rook
 
                 elif move.endCol - move.startCol == - 2:  # queenside
-                    self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 2]
-                    self.board[move.endRow][move.endCol - 2] = "--"  # remove the old rook
+                    self.board[move.endRow][move.endCol -2] = self.board[move.endRow][move.endCol + 1]
+                    self.board[move.endRow][move.endCol + 1] = "--"
+
+            # undo castling rights
+            self.castleRightsLog.pop() # get rid of castle rights from move we are undoing.
+            lastCastleRights = self.castleRightsLog[-1]
+            self.currentCastlingRights = CastleRights(lastCastleRights.wks, lastCastleRights.bks, lastCastleRights.wqs, lastCastleRights.bqs)  # reinitialize castle rights to not make a copy
+
+            self.checkMate = False
+            self.staleMate = False
 
 
     """
@@ -165,9 +166,9 @@ class GameState:
             elif move.endCol - move.startCol == -2:  # to the left: queen side castle
                 self.board[move.endRow][move.endCol + 1] = self.board[move.endRow][move.endCol - 2]
                 self.board[move.endRow][move.endCol - 2] = "--"
+
         self.updateCastleRights(move)  # update the castling rights whenever it's a rook or a king move
         self.castleRightsLog.append(CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs))
-
 
         self.whiteToMove = not self.whiteToMove  # swap players of the gameState
 
@@ -233,13 +234,11 @@ class GameState:
         if self.board[r][c + 1] == "--" and self.board[r][c + 2] == "--":
             if not self.squareUnderAttack(r, c + 1) and not self.squareUnderAttack(r, c + 2):
                 moves.append(Move((c, r), (c+2, r), self.board, isCastleMove=True))
-                print("appending castle move: " + str(moves[-1].moveID))
 
     def getQueenSideCastleMoves(self, r, c, moves):
         if self.board[r][c - 1] == "--" and self.board[r][c - 2] == "--" and self.board[r][c - 3] == "--":
             if not self.squareUnderAttack(r, c - 1) and not self.squareUnderAttack(r, c - 2):  # only squares king moves through need to not be under attack.
                 moves.append(Move((c, r), (c-2, r), self.board, isCastleMove=True))
-                print("appending castle move: " + str(moves[-1].moveID))
 
 
     """

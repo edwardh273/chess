@@ -7,10 +7,10 @@ from ChessGameState import GameState
 from ChessAI import findRandomMove, findBestMove
 from Move import Move
 
-WIDTH = HEIGHT = 512
+WIDTH = HEIGHT = 768
 DIMENSION = 8  # dimensions of chess board = 8x8
 SQ_SIZE = HEIGHT // DIMENSION
-MAX_FPS = 15  # for animation later on
+MAX_FPS = 30  # for animation later on
 IMAGES = {}
 CHESS_DIR = os.path.dirname(__file__)
 
@@ -84,11 +84,14 @@ def main():
                                 print(playerClicks)
 
             elif e.type == p.KEYDOWN:
-                if e.key == p.K_z and len(gs.moveLog) > 0: #undo when 'z' is pressed.
-                    gs.undoMove()
-                    print('Undone move')
-                    print([move.moveID for move in gs.moveLog])
-                    validMoves = gs.getValidMoves()
+                if e.key == p.K_z and len(gs.moveLog) > 0:  # undo when 'z' is pressed.
+                    if playerOne and playerTwo:  # if both human players, undo the last human move
+                        gs.undoMove()
+                        validMoves = gs.getValidMoves()
+                    if playerOne and not playerTwo:  # if only white human player
+                        gs.undoMove()
+                        gs.undoMove()
+                        validMoves = gs.getValidMoves()
 
         # ChessAI logic
         if not isHumanTurn:
