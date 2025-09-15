@@ -34,7 +34,7 @@ def main():
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
     playerOne = True  # if a human is playing white, then True.  If AI is playing, then false
-    playerTwo = True  # same as above, but for black.
+    playerTwo = False  # same as above, but for black.
 
     validMoves = gs.getValidMoves()
 
@@ -94,7 +94,7 @@ def main():
                         validMoves = gs.getValidMoves()
 
         # ChessAI logic
-        if not isHumanTurn:
+        if not isHumanTurn and not gameOver:
             AIMove = findBestMove(gs, validMoves)
             gs.makeMove(AIMove)
             moveMade = True
