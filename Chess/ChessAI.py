@@ -3,7 +3,8 @@ import random
 pieceScore = {"K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0
-DEPTH = 2
+DEPTH = 3
+nextMove = None
 
 """
 Returns a random move.
@@ -36,7 +37,7 @@ def findBestMove(gs, validMoves):
         for playerMove in playerMoves:
             gs.makeMove(playerMove)
             if gs.checkMate:
-                score = -turnMultiplier * CHECKMATE  # now it's black to move.  Score = CHECKMATE, best possible scenario for white.
+                score = -turnMultiplier * CHECKMATE  # now it's black to move.  Score = CHECKMATE, the best possible scenario for white.
             elif gs.staleMate:
                 score = STALEMATE
             else:
@@ -59,6 +60,7 @@ The function that is called by ChessMain
 def findBestMoveMinMax(gs, validMoves):
     global nextMove
     nextMove = None
+    random.shuffle(validMoves)  # to prevent rook moving side to side
     findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
     return nextMove
 

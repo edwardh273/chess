@@ -13,6 +13,7 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 30  # for animation later on
 IMAGES = {}
 CHESS_DIR = os.path.dirname(__file__)
+colors = []
 
 """
 The main driver for our code.  This will handle user input and updating the graphics.
@@ -33,7 +34,7 @@ def main():
     print("white to move: " + str(gs.whiteToMove))
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
-    playerOne = True  # if a human is playing white, then True.  If AI is playing, then false
+    playerOne = False  # if a human is playing white, then True.  If AI is playing, then false
     playerTwo = False  # same as above, but for black.
 
     validMoves = gs.getValidMoves()
@@ -185,7 +186,7 @@ def loadImages():
 
 
 """
-Responsible for all the graphics within a current gamestate.
+Responsible for all the graphics within a current gameState.
 """
 def drawGameState(screen, gs, validMoves, sqSelected):
     drawBoard(screen)  # draw squares on the board
