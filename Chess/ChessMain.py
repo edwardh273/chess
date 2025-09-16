@@ -4,7 +4,7 @@ This is the main driver file.  It will be responsible for handling user input an
 import pygame as p
 import os
 from ChessGameState import GameState
-from ChessAI import findRandomMove, findBestMove, findBestMoveMinMax
+from ChessAI import findRandomMove, findBestMoveNoRecursion, findBestMoveRecursion
 from Move import Move
 
 WIDTH = HEIGHT = 768
@@ -34,7 +34,7 @@ def main():
     print("white to move: " + str(gs.whiteToMove))
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
-    playerOne = False  # if a human is playing white, then True.  If AI is playing, then false
+    playerOne = True  # if a human is playing white, then True.  If AI is playing, then false
     playerTwo = False  # same as above, but for black.
 
     validMoves = gs.getValidMoves()
@@ -96,7 +96,7 @@ def main():
 
         # ChessAI logic
         if not isHumanTurn and not gameOver:
-            AIMove = findBestMoveMinMax(gs, validMoves)
+            AIMove = findBestMoveRecursion(gs, validMoves)
             gs.makeMove(AIMove)
             moveMade = True
 
