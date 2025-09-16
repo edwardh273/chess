@@ -3,7 +3,7 @@ import random
 pieceScore = {"K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 1000
 STALEMATE = 0
-DEPTH = 3
+DEPTH = 2
 nextMove = None
 
 """
@@ -61,7 +61,8 @@ def findBestMoveMinMax(gs, validMoves):
     global nextMove
     nextMove = None
     random.shuffle(validMoves)  # to prevent rook moving side to side
-    findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
+    # findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
+    findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
     return nextMove
 
 
@@ -85,7 +86,6 @@ def findMoveMinMax(gs, validMoves, depth, whiteToMove: bool):
                     nextMove = move
             gs.undoMove()
         return maxScore
-
     else:
         minScore = CHECKMATE
         for move in validMoves:
@@ -98,6 +98,26 @@ def findMoveMinMax(gs, validMoves, depth, whiteToMove: bool):
                     nextMove = move
             gs.undoMove()
         return minScore
+
+
+"""
+findNegaMax.  Always find the maximum score for black and white.
+"""
+def findMoveNegaMax(gs, validMoves, depth, turnMultiplier):
+    global nextMove
+    if depth == 0:
+        return turnMultiplier * scoreMaterial(gs.board)
+    maxScore = -CHECKMATE
+    for move in validMoves:
+        gs.makeMove(move)
+        nextMoves = gs.getValidMoves()
+        score = -findMoveNegaMax(gs, nextMoves, depth-1, -turnMultiplier)
+        if score > maxScore:
+            maxScore = score
+            if depth == DEPTH:
+                nextMove = move
+        gs.undoMove()
+    return maxScore
 
 
 """
