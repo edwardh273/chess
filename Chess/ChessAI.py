@@ -64,7 +64,7 @@ def findBestMoveRecursion(gs, validMoves):
     random.shuffle(validMoves)  # to prevent rook moving side to side
     counter = 0
     # findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
-    # findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
+    # bestScore = findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)  # alpha = current max, so start lowest;  beta = current min so start hightest
     print(f"moves searched: {str(counter)}   max score: {str(bestScore)}")
     return nextMove

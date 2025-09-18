@@ -73,10 +73,7 @@ def main():
                             for i in range(len(validMoves)):
                                 if moveAttempt == validMoves[i]:  # if move is in all moves, make move, change moveMade variable, clear playerClicks.
                                     gs.makeMove(validMoves[i])
-                                    print([move.moveID for move in gs.moveLog])
                                     moveMade = True
-                                    print()
-                                    print("white to move: " + str(gs.whiteToMove))
                                     sqSelected = ()
                                     playerClicks = []
                             if not moveMade:  # if len(playerClicks == 2) but move not a valid move, clear playerClicks
@@ -102,6 +99,9 @@ def main():
 
         if moveMade:  # only calculate new moves after each turn, not each frame.
             animateMove(gs.moveLog[-1], screen, gs.board, clock)
+            print([move.moveID for move in gs.moveLog])
+            print()
+            print("white to move: " + str(gs.whiteToMove))
             validMoves = gs.getValidMoves()
             moveMade = False  # set back to False
 
