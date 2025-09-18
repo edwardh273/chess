@@ -30,6 +30,7 @@ class GameState:
         self.staleMate = False
 
         self.enpassantPossible = ()
+        self.enpassantPossibleLog = [self.enpassantPossible]
 
         self.currentCastlingRights = CastleRights(True, True, True, True)
         self.castleRightsLog = [CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs)]  # initial log is [(T, T, T, T)]
@@ -127,6 +128,10 @@ class GameState:
             lastCastleRights = self.castleRightsLog[-1]
             self.currentCastlingRights = CastleRights(lastCastleRights.wks, lastCastleRights.bks, lastCastleRights.wqs, lastCastleRights.bqs)  # reinitialize castle rights to not make a copy
 
+            self.enpassantPossibleLog.pop()
+            self.enpassantPossible = self.enpassantPossibleLog[-1]
+
+
             self.checkMate = False
             self.staleMate = False
 
@@ -152,6 +157,8 @@ class GameState:
         # enpassant
         if move.pieceMoved[1] == 'p' and abs(move.startRow - move.endRow) == 2:  # if a pawn moves 2 squares
             self.enpassantPossible = (move.startCol, (move.startRow + move.endRow) // 2)  # enpassant possible to the square where the pawn would have moved if it had only moved 1 square.
+        else:
+            self.enpassantPossible = ()
         if move.isEnpassantMove:
             self.board[move.startRow][move.endCol] = "--"  # capturing the pawn
 
@@ -167,6 +174,8 @@ class GameState:
 
         self.updateCastleRights(move)  # update the castling rights whenever it's a rook or a king move
         self.castleRightsLog.append(CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs))
+
+        self.enpassantPossibleLog.append(self.enpassantPossible)
 
         self.whiteToMove = not self.whiteToMove  # swap players of the gameState
 

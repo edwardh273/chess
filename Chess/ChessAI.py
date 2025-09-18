@@ -65,8 +65,8 @@ def findBestMoveRecursion(gs, validMoves):
     counter = 0
     # findMoveMinMax(gs, validMoves, DEPTH, gs.whiteToMove)
     # findMoveNegaMax(gs, validMoves, DEPTH, 1 if gs.whiteToMove else -1)
-    findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)  # alpha = current max, so start lowest;  beta = current min so start hightest
-    print(counter)
+    bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)  # alpha = current max, so start lowest;  beta = current min so start hightest
+    print(f"moves searched: {str(counter)}   max score: {str(bestScore)}")
     return nextMove
 
 
