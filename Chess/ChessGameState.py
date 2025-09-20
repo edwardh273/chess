@@ -53,7 +53,7 @@ class GameState:
     All moves considering check
     """
     def getValidMoves(self):
-        tempCastleRights = CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs)
+        tempCastleRights = CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs)  # since some generated moves will move the Kind/Rooks
         tmpEnpassantPossible = self.enpassantPossible # tuples are immutable so we are grabbing the value of it, not a reference to that object.
 
         moves = self.getAllPossibleMoves()
