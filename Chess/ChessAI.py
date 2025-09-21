@@ -1,5 +1,6 @@
 import random
 from PieceScores import *
+import time
 
 CHECKMATE = 1000
 STALEMATE = 0
@@ -53,11 +54,13 @@ The function that is called by ChessMain
 """
 def findBestMove(gs, validMoves):
     global nextMove, counter
+    startTime = time.time()
     nextMove = None
     random.shuffle(validMoves)  # to prevent rook moving side to side
     counter = 0
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)  # alpha = current max, so start lowest;  beta = current min so start hightest
-    print(f"moves searched: {str(counter)}   max score: {str(bestScore)}")
+    endTime = time.time()
+    print(f"movesSearched: {counter}     maxScore: {bestScore:.2f}     Time: {endTime - startTime:.2f}")
     return nextMove
 
 
