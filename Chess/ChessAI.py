@@ -52,7 +52,7 @@ def scoreBoard(gs):
 """
 The function that is called by ChessMain
 """
-def findBestMove(gs, validMoves):
+def findBestMove(gs, validMoves, returnQueue):
     global nextMove, counter
     startTime = time.time()
     nextMove = None
@@ -60,8 +60,8 @@ def findBestMove(gs, validMoves):
     counter = 0
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)  # alpha = current max, so start lowest;  beta = current min so start hightest
     endTime = time.time()
-    print(f"movesSearched: {counter}     maxScore: {bestScore:.2f}     Time: {endTime - startTime:.2f}")
-    return nextMove
+    print(f"movesSearched: {counter}     maxScore: {bestScore:.3f}     Time: {endTime - startTime:.2f}")
+    returnQueue.put(nextMove)
 
 
 """
@@ -77,7 +77,7 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
         return turnMultiplier * scoreBoard(gs)
 
     # move ordering - implement later.  Best moves explored first are most efficient.
-    maxScore = -CHECKMATE  # worst scenario
+    maxScore = -CHECKMATE + 1 # worst scenario
     for move in validMoves:
         gs.makeMove(move)
         nextMoves = gs.getValidMoves()
@@ -86,7 +86,7 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
             maxScore = score
             if depth == DEPTH:
                 nextMove = move
-                print(move.moveID, score)
+                print(move.moveID, f"{score:.3f}")
         gs.undoMove()
 
         alpha = max(maxScore, alpha)  # pruning

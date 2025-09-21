@@ -1,5 +1,6 @@
 import pygame as p
 import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # hide the pygame welcome message for every new process started
 
 WIDTH = HEIGHT = 768
 DIMENSION = 8  # dimensions of chess board = 8x8
