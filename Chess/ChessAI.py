@@ -3,7 +3,7 @@ from PieceScores import *
 
 CHECKMATE = 1000
 STALEMATE = 0
-DEPTH = 1
+DEPTH = 2
 nextMove = None
 counter = 0
 
@@ -27,19 +27,23 @@ def scoreBoard(gs):
             color = square[0]
             piece = square[1]
 
+            if square == 'wp':
+                score += pieceScore[piece] + whitePawnScore[row][col] * .1
+            elif square == 'bp':
+                score -= pieceScore[piece] + blackPawnScore[row][col] * .1
+
             if piece in ['B', 'N']:
-
                 piecePositionScore = piecePositionScores[piece][row][col]
-
                 if color == 'w':
                     score += pieceScore[piece] + piecePositionScore * .1
                 elif color == 'b':
                     score -= pieceScore[piece] + piecePositionScore * .1
 
-            if square == 'wp':
-                score += pieceScore[piece] + whitePawnScore[row][col] * .1
-            elif square == 'bp':
-                score -= pieceScore[piece] + blackPawnScore[row][col] * .1
+            if piece in ['Q', 'R']:
+                if color == 'w':
+                    score += pieceScore[piece]
+                elif color == 'b':
+                    score -= pieceScore[piece]
 
     return score
 

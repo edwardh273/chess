@@ -65,7 +65,6 @@ def main():
                         else:
                             sqSelected = (col, row)
                             playerClicks.append(sqSelected)
-                            print("player clicked square {}".format(sqSelected))
 
                         if len(playerClicks) == 2:  # if a user has made their second click, update the board and clear playerClicks
                             print("2 clicks: attempt move:")
@@ -87,16 +86,31 @@ def main():
                     if playerOne and playerTwo:  # if both human players, undo the last human move
                         gs.undoMove()
                         validMoves = gs.getValidMoves()
+                        gameOver = False
                     if playerOne and not playerTwo:  # if only white human player
                         gs.undoMove()
                         gs.undoMove()
                         validMoves = gs.getValidMoves()
+                        gameOver = False
+
+        if gameOver:  # end of game logic
+            if gs.inCheck():
+                if gs.whiteToMove:
+                    drawText(screen, "Black wins by checkmate")
+                else:
+                    drawText(screen, "White wins by checkmate")
+            else:
+                drawText(screen, "Stalemate")
+
 
         # ChessAI logic
         if not isHumanTurn and not gameOver:
             AIMove = findBestMove(gs, validMoves)
-            gs.makeMove(AIMove)
-            moveMade = True
+            if AIMove is not None:
+                gs.makeMove(AIMove)
+                moveMade = True
+            else:
+                gameOver = True
 
         if moveMade:  # only calculate new moves after each turn, not each frame.
             animateMove(gs.moveLog[-1], screen, gs.board, clock)
@@ -104,15 +118,6 @@ def main():
             print()
             print("white to move: " + str(gs.whiteToMove))
             validMoves = gs.getValidMoves()
-            if gs.checkMate:
-                gameOver = True
-                if gs.whiteToMove:
-                    drawText(screen, "Black wins by checkmate")
-                else:
-                    drawText(screen, "White wins by checkmate")
-            elif gs.staleMate:
-                gameOver = True
-                drawText(screen, "Stalemate")
             moveMade = False  # set back to False
 
 

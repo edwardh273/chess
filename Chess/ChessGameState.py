@@ -76,6 +76,7 @@ class GameState:
         if len(moves) == 0:  # either checkmate or stalemate
             if self.inCheck():
                 self.checkMate = True
+                print("--------------checkmate discovered")
             else:
                 self.staleMate = True
         else:
