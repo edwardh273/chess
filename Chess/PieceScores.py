@@ -36,6 +36,23 @@ whitePawnScore = [ [6, 6, 6, 6, 6, 6, 6, 6],
                    [1, 1, 1, 0, 0, 1, 1, 1],
                    [0, 0, 0, 0, 0, 0, 0, 0]]
 
-piecePositionScores = {"N": knightScore, "B": bishopScore}
+kingScore = [ [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+              [3, 4, 8, 0, 0, 1, 8, 3]]
+
+piecePositionScores = {"wp": whitePawnScore,
+                       "bp": blackPawnScore,
+                       "wN": knightScore,
+                       "bN": knightScore,
+                       "wB": bishopScore,
+                       "bB": bishopScore,
+                       "wK": kingScore,
+                       "bK": kingScore[::-1]
+                       }
 
 # TODO: add in castling
