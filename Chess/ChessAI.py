@@ -31,14 +31,14 @@ def scoreBoard(gs):
             if square == 'wp':
                 score += pieceScore[piece] + whitePawnScore[row][col] * .1
             elif square == 'bp':
-                score -= pieceScore[piece] + blackPawnScore[row][col] * .1
+                score -= (pieceScore[piece] + blackPawnScore[row][col] * .1)
 
             if piece in ['B', 'N']:
                 piecePositionScore = piecePositionScores[piece][row][col]
                 if color == 'w':
                     score += pieceScore[piece] + piecePositionScore * .1
                 elif color == 'b':
-                    score -= pieceScore[piece] + piecePositionScore * .1
+                    score -= (pieceScore[piece] + piecePositionScore * .1)
 
             if piece in ['Q', 'R']:
                 if color == 'w':
@@ -77,7 +77,7 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
         return turnMultiplier * scoreBoard(gs)
 
     # move ordering - implement later.  Best moves explored first are most efficient.
-    maxScore = -CHECKMATE + 1 # worst scenario
+    maxScore = -CHECKMATE # worst scenario
     for move in validMoves:
         gs.makeMove(move)
         nextMoves = gs.getValidMoves()
@@ -86,7 +86,7 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
             maxScore = score
             if depth == DEPTH:
                 nextMove = move
-                print(move.moveID, f"{score:.3f}")
+                print(nextMove.moveID, f"{maxScore:.3f}")
         gs.undoMove()
 
         alpha = max(maxScore, alpha)  # pruning
@@ -94,3 +94,10 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
             break
 
     return maxScore
+
+
+"""
+Returns a random move.
+"""
+def findRandomMove(validMoves):
+    return validMoves[random.randint(0, len(validMoves)-1)]

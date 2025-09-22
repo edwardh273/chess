@@ -10,11 +10,6 @@ pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3.25, "N": 3, "p": 1}
 
 # Less advanced search algorithms below
 
-"""
-Returns a random move.
-"""
-def findRandomMove(validMoves):
-    return validMoves[random.randint(0, len(validMoves)-1)]
 
 """
 Finds best move based on material alone.  Written from the perspective of player = white, AI = black.

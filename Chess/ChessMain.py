@@ -3,7 +3,7 @@ This is the main driver file.  It will be responsible for handling user input an
 """
 from multiprocessing import Process, Queue
 from ChessGameState import GameState
-from ChessAI import findBestMove
+from ChessAI import findBestMove, findRandomMove
 from Move import Move
 from DisplayFuncs import *
 
@@ -35,8 +35,10 @@ def main():
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
 
-    playerOne = False  # if a human is playing white, then True.  If AI is playing, then false
-    playerTwo = False  # same as above, but for black.
+    whitePlayer = False  # if a human is playing white, then True.  If AI is playing, then false
+    blackPlayer = False  # same as above, but for black.
+    whiteDepth = 2
+    blackDepth = 3
 
     validMoves = gs.getValidMoves()
     print()
@@ -44,7 +46,7 @@ def main():
 
     while running:
 
-        isHumanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
+        isHumanTurn = (gs.whiteToMove and whitePlayer) or (not gs.whiteToMove and blackPlayer)
 
         for e in p.event.get():
 
@@ -84,11 +86,11 @@ def main():
 
             elif e.type == p.KEYDOWN and isHumanTurn:
                 if e.key == p.K_z and len(gs.moveLog) > 0:  # undo when 'z' is pressed.
-                    if playerOne and playerTwo:  # if both human players, undo the last human move
+                    if whitePlayer and blackPlayer:  # if both human players, undo the last human move
                         gs.undoMove()
                         validMoves = gs.getValidMoves()
                         gameOver = False
-                    if playerOne and not playerTwo:  # if only white human player
+                    if whitePlayer and not blackPlayer:  # if only white human player
                         gs.undoMove()
                         gs.undoMove()
                         validMoves = gs.getValidMoves()
@@ -121,7 +123,13 @@ def main():
                     gs.makeMove(AIMove)
                     moveMade = True
                 else:
-                    gameOver = True
+                    if validMoves:
+                        print([move.moveID for move in validMoves])
+                        AIMove = findRandomMove(validMoves)
+                        gs.makeMove(AIMove)
+                        moveMade = True
+                    else:
+                        gameOver = True
                 AIThinking = False
 
 
