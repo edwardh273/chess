@@ -37,8 +37,7 @@ def main():
 
     whitePlayer = False  # if a human is playing white, then True.  If AI is playing, then false
     blackPlayer = False  # same as above, but for black.
-    whiteDepth = 2
-    blackDepth = 3
+
 
     validMoves = gs.getValidMoves()
     print()
@@ -122,7 +121,7 @@ def main():
                 if AIMove is not None:
                     gs.makeMove(AIMove)
                     moveMade = True
-                else:
+                else:  # if checkmate inevitable
                     if validMoves:
                         print([move.moveID for move in validMoves])
                         AIMove = findRandomMove(validMoves)

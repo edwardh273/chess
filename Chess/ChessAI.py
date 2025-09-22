@@ -4,7 +4,8 @@ import time
 
 CHECKMATE = 1000
 STALEMATE = 0
-DEPTH = 2
+WhiteDepth = 2
+BlackDepth = 3
 nextMove = None
 counter = 0
 
@@ -53,12 +54,13 @@ def scoreBoard(gs):
 The function that is called by ChessMain
 """
 def findBestMove(gs, validMoves, returnQueue):
-    global nextMove, counter
+    global nextMove, counter, WhiteDepth, BlackDepth
     startTime = time.time()
     nextMove = None
     random.shuffle(validMoves)  # to prevent rook moving side to side
     counter = 0
-    bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)  # alpha = current max, so start lowest;  beta = current min so start hightest
+    depth = WhiteDepth if gs.whiteToMove else BlackDepth
+    bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, depth, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1, True if gs.whiteToMove else False)  # alpha = current max, so start lowest;  beta = current min so start hightest
     endTime = time.time()
     print(f"movesSearched: {counter}     maxScore: {bestScore:.3f}     Time: {endTime - startTime:.2f}")
     returnQueue.put(nextMove)
@@ -70,8 +72,8 @@ Alpha = Best score the current player has found so far (starts at -1000)
 Beta = Best score the opponent has found so far (starts at +1000)
 When beta < alpha, the maximizing player need not consider further descendants of this node, as opponent player won't let them reach it in real play.
 """
-def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier):
-    global nextMove, counter
+def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier, whiteAI):
+    global nextMove, counter, WhiteDepth, BlackDepth
     counter += 1
     if depth == 0:
         return turnMultiplier * scoreBoard(gs)
@@ -81,10 +83,10 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
     for move in validMoves:
         gs.makeMove(move)
         nextMoves = gs.getValidMoves()
-        score = -findMoveNegaMaxAlphaBeta(gs, nextMoves, depth-1, -beta, -alpha, -turnMultiplier)  # switch the alpha beta perspective.
+        score = -findMoveNegaMaxAlphaBeta(gs, nextMoves, depth-1, -beta, -alpha, -turnMultiplier, whiteAI)  # switch the alpha beta perspective.
         if score > maxScore:
             maxScore = score
-            if depth == DEPTH:
+            if (depth == WhiteDepth and whiteAI) or (depth == BlackDepth and not whiteAI):
                 nextMove = move
                 print(nextMove.moveID, f"{maxScore:.3f}")
         gs.undoMove()
