@@ -8,6 +8,7 @@ WhiteDepth = 3
 BlackDepth = 3
 nextMove = None
 counter = 0
+counterBreak = 0
 
 
 """
@@ -49,14 +50,14 @@ def scoreBoard(gs):
 The function that is called by ChessMain
 """
 def findBestMove(gs, validMoves, returnQueue, whiteMoveList, blackMoveList):
-    global nextMove, counter
+    global nextMove, counter, counterBreak
     startTime = time.time()
     nextMove = None
     random.shuffle(validMoves)  # to prevent rook moving side to side
     counter = 0
+    counterBreak = 0
     depth = WhiteDepth if gs.whiteToMove else BlackDepth
 
-    # move ordering - implement later.  Best moves explored first are most efficient.
     if gs.whiteToMove:
         if len(whiteMoveList) > 1 and whiteMoveList[-2] in validMoves:
             print("---------changing move order for white---------")
@@ -72,7 +73,7 @@ def findBestMove(gs, validMoves, returnQueue, whiteMoveList, blackMoveList):
 
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, depth, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1, True if gs.whiteToMove else False, whiteMoveList, blackMoveList)  # alpha = current max, so start lowest;  beta = current min so start hightest
     endTime = time.time()
-    print(f"movesSearched: {counter}     maxScore: {bestScore:.3f}     Time: {endTime - startTime:.2f}")
+    print(f"movesSearched: {counter}     maxScore: {bestScore:.3f}     Time: {endTime - startTime:.2f}     branchesBrokenOutOf: {counterBreak}")
     returnQueue.put((nextMove, whiteMoveList, blackMoveList))
 
 
@@ -83,7 +84,7 @@ Beta = Best score the opponent has found so far (starts at +1000)
 When beta < alpha, the maximizing player need not consider further descendants of this node, as opponent player won't let them reach it in real play.
 """
 def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier, whiteAI, whiteMoveList, blackMoveList):
-    global nextMove, counter, WhiteDepth, BlackDepth
+    global nextMove, counter, WhiteDepth, BlackDepth, counterBreak
     counter += 1
     if depth == 0:
         return turnMultiplier * scoreBoard(gs)
@@ -103,6 +104,7 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier,
 
         alpha = max(maxScore, alpha)  # pruning
         if beta <= alpha:  # we can stop searching here because opponent has already found a position limiting us to beta so will never let us reach this position in real play.
+            counterBreak += 1
             break
 
     return maxScore
