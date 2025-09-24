@@ -38,6 +38,9 @@ def main():
     whitePlayer = False  # if a human is playing white, then True.  If AI is playing, then false
     blackPlayer = False  # same as above, but for black.
 
+    whiteMoveList = []
+    blackMoveList = []
+
 
     validMoves = gs.getValidMoves()
     print()
@@ -113,11 +116,12 @@ def main():
             if not AIThinking:
                 AIThinking = True
                 returnQueue = Queue()
-                chessAIProcess = Process(target=findBestMove, args=(gs, validMoves, returnQueue))  # TODO: see if threading is better.
+                chessAIProcess = Process(target=findBestMove, args=(gs, validMoves, returnQueue, whiteMoveList, blackMoveList))
                 chessAIProcess.start()
 
             if not chessAIProcess.is_alive():  # if done thinking.
-                AIMove = returnQueue.get()
+                result = returnQueue.get()
+                AIMove, whiteMoveList, blackMoveList = result[0], result[1], result[2]
                 if AIMove is not None:
                     gs.makeMove(AIMove)
                     moveMade = True
