@@ -1,4 +1,5 @@
 from Move import Move, CastleRights
+import numpy as np
 
 """
 This class is responsible for storing all the information about the current
@@ -7,7 +8,7 @@ moves at the current state.  It will also keep a move log.
 """
 class GameState:
     def __init__(self):
-        self.board = [
+        self.board = np.array([
             ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
             ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
@@ -16,7 +17,7 @@ class GameState:
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
-        ]
+        ])
 
         self.moveFunctions = {'p': self.getPawnMoves, 'R': self.getRookMoves, 'N': self.getKnightMoves, 'B': self.getBishopMoves, 'Q': self.getQueenMoves, 'K': self.getKingMoves}
 
