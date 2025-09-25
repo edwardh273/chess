@@ -35,7 +35,7 @@ def main():
     sqSelected = ()  # no square is selected initially.  Keeps track of last click of user (tuple: (col, row))
     playerClicks = []  # keep track of player clicks (two tuples: [(4, 7), (4, 5)])
 
-    whitePlayer = False  # if a human is playing white, then True.  If AI is playing, then false
+    whitePlayer = True  # if a human is playing white, then True.  If AI is playing, then false
     blackPlayer = False  # same as above, but for black.
 
 
@@ -113,7 +113,7 @@ def main():
             if not AIThinking:
                 AIThinking = True
                 returnQueue = Queue()
-                chessAIProcess = Process(target=findBestMove, args=(gs, validMoves, returnQueue))  # TODO: see if threading is better.
+                chessAIProcess = Process(target=findBestMove, args=(gs, validMoves, returnQueue))
                 chessAIProcess.start()
 
             if not chessAIProcess.is_alive():  # if done thinking.

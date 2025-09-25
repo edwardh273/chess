@@ -1,10 +1,10 @@
 import random
-from PieceScores import *
 import time
+from PieceScores import *
 
 CHECKMATE = 1000
 STALEMATE = 0
-WhiteDepth = 2
+WhiteDepth = 3
 BlackDepth = 3
 nextMove = None
 counter = 0
@@ -21,27 +21,23 @@ def scoreBoard(gs):
             return CHECKMATE  # white wins
     elif gs.staleMate:
         return STALEMATE
-
     score = 0
     for row in range(len(gs.board)):
         for col in range(len(gs.board[row])):
             square = gs.board[row][col]
             color = square[0]
             piece = square[1]
-
             if square in ['wp', 'bp', 'wB', 'bB', 'wN', 'bN', 'wK', 'bK']:
                 piecePositionScore = piecePositionScores[square][row][col]
                 if color == 'w':
                     score += pieceScore[piece] + piecePositionScore * .1
                 elif color == 'b':
                     score -= (pieceScore[piece] + piecePositionScore * .1)
-
             if piece in ['Q', 'R']:
                 if color == 'w':
                     score += pieceScore[piece]
                 elif color == 'b':
                     score -= pieceScore[piece]
-
     return score
 
 
@@ -51,14 +47,26 @@ The function that is called by ChessMain
 def findBestMove(gs, validMoves, returnQueue):
     global nextMove, counter, WhiteDepth, BlackDepth
     startTime = time.time()
-    nextMove = None
-    random.shuffle(validMoves)  # to prevent rook moving side to side
-    counter = 0
+    nextMove, counter = None, 0
     depth = WhiteDepth if gs.whiteToMove else BlackDepth
+    validMoves.sort(reverse=True, key=lambda move: pieceCapturedFunc(move, gs))
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, depth, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1, True if gs.whiteToMove else False)  # alpha = current max, so start lowest;  beta = current min so start hightest
     endTime = time.time()
     print(f"movesSearched: {counter}     maxScore: {bestScore:.3f}     Time: {endTime - startTime:.2f}")
     returnQueue.put(nextMove)
+
+
+""""
+Function to sort valid moves before they are passed into alpha-beta pruning.
+Likely strongest moves should be searched first for better pruning efficiency
+"""
+def pieceCapturedFunc(move, gameState):
+    score = 0
+    if move.pieceCaptured != "--":
+        score += pieceScore[move.pieceCaptured[1]]
+    if gameState.squareUnderAttack(move.startRow, move.startCol):
+        score += pieceScore[move.pieceMoved[1]]
+    return score
 
 
 """
@@ -73,7 +81,6 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier,
     if depth == 0:
         return turnMultiplier * scoreBoard(gs)
 
-    # move ordering - implement later.  Best moves explored first are most efficient.
     maxScore = -CHECKMATE # worst scenario
     for move in validMoves:
         gs.makeMove(move)
@@ -89,7 +96,6 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier,
         alpha = max(maxScore, alpha)  # pruning
         if beta <= alpha:  # we can stop searching here because opponent has already found a position limiting us to beta so will never let us reach this position in real play.
             break
-
     return maxScore
 
 
