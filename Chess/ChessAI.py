@@ -76,7 +76,7 @@ def findBestMove(gs, validMoves, returnQueue, whiteMoveList, blackMoveList):
     # sort valid moves here
     print("---------sorting valid moves---------")
     print([move.moveID for move in validMoves])
-    validMoves.sort(reverse=True, key=pieceCapturedFunc)
+    validMoves.sort(reverse=True, key=lambda move: pieceCapturedFunc(move, gs))
     print([move.moveID for move in validMoves])
 
 
