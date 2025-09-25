@@ -113,7 +113,7 @@ def main():
             if not AIThinking:
                 AIThinking = True
                 returnQueue = Queue()
-                chessAIProcess = Process(target=findBestMove, args=(gs, validMoves, returnQueue, whiteMoveList, blackMoveList))
+                chessAIProcess = Process(target=findBestMove, args=(gs, validMoves, returnQueue))
                 chessAIProcess.start()
 
             if not chessAIProcess.is_alive():  # if done thinking.
