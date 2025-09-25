@@ -27,17 +27,12 @@ def scoreBoard(gs):
             square = gs.board[row][col]
             color = square[0]
             piece = square[1]
-            if square in ['wp', 'bp', 'wB', 'bB', 'wN', 'bN', 'wK', 'bK']:
+            if square != "--":
                 piecePositionScore = piecePositionScores[square][row][col]
                 if color == 'w':
                     score += pieceScore[piece] + piecePositionScore * .1
                 elif color == 'b':
                     score -= (pieceScore[piece] + piecePositionScore * .1)
-            if piece in ['Q', 'R']:
-                if color == 'w':
-                    score += pieceScore[piece]
-                elif color == 'b':
-                    score -= pieceScore[piece]
     return score
 
 
