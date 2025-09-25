@@ -1,6 +1,7 @@
 import random
-from PieceScores import *
 import time
+from PieceScores import *
+from MoveOrdering import pieceCapturedFunc
 
 CHECKMATE = 1000
 STALEMATE = 0
@@ -58,18 +59,26 @@ def findBestMove(gs, validMoves, returnQueue, whiteMoveList, blackMoveList):
     counterBreak = 0
     depth = WhiteDepth if gs.whiteToMove else BlackDepth
 
-    if gs.whiteToMove:
-        if len(whiteMoveList) > 1 and whiteMoveList[-2] in validMoves:
-            print("---------changing move order for white---------")
-            tmpMove0 = validMoves[0]
-            validMoves[validMoves.index(whiteMoveList[-2])] = tmpMove0
-            validMoves[0] = whiteMoveList[-2]
-    else:
-        if len(blackMoveList) > 1 and blackMoveList[-2] in validMoves:
-            print("---------changing move order for black---------")
-            tmpMove0 = validMoves[0]
-            validMoves[validMoves.index(blackMoveList[-2])] = tmpMove0
-            validMoves[0] = blackMoveList[-2]
+    # if gs.whiteToMove:
+    #     if len(whiteMoveList) > 1 and whiteMoveList[-2] in validMoves:
+    #         print("---------changing move order for white---------")
+    #         tmpMove0 = validMoves[0]
+    #         validMoves[validMoves.index(whiteMoveList[-2])] = tmpMove0
+    #         validMoves[0] = whiteMoveList[-2]
+    # else:
+    #     if len(blackMoveList) > 1 and blackMoveList[-2] in validMoves:
+    #         print("---------changing move order for black---------")
+    #         tmpMove0 = validMoves[0]
+    #         validMoves[validMoves.index(blackMoveList[-2])] = tmpMove0
+    #         validMoves[0] = blackMoveList[-2]
+
+
+    # sort valid moves here
+    print("---------sorting valid moves---------")
+    print([move.moveID for move in validMoves])
+    validMoves.sort(reverse=True, key=pieceCapturedFunc)
+    print([move.moveID for move in validMoves])
+
 
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, depth, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1, True if gs.whiteToMove else False, whiteMoveList, blackMoveList)  # alpha = current max, so start lowest;  beta = current min so start hightest
     endTime = time.time()
