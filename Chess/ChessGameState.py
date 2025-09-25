@@ -30,7 +30,11 @@ class GameState:
         self.pins = []
         self.checks = []
 
+        self.checkMate = False
+        self.staleMate = False
+
         self.enpassantPossible = ()
+        self.enpassantPossibleLog = [self.enpassantPossible]
 
         self.currentCastlingRights = CastleRights(True, True, True, True)
         self.castleRightsLog = [CastleRights(self.currentCastlingRights.wks, self.currentCastlingRights.bks, self.currentCastlingRights.wqs, self.currentCastlingRights.bqs)]  # initial log is [(T, T, T, T)]
