@@ -97,7 +97,7 @@ def main():
 
         if gameOver:  # end of game logic
             clock.tick(5)
-            if gs.inCheck():
+            if gs.inCheck:
                 if gs.whiteToMove:
                     drawText(screen, "Black wins by checkmate")
                 else:
@@ -123,12 +123,9 @@ def main():
                     moveMade = True
                 else:  # if checkmate inevitable
                     if validMoves:
-                        print([move.moveID for move in validMoves])
                         AIMove = findRandomMove(validMoves)
                         gs.makeMove(AIMove)
                         moveMade = True
-                    else:
-                        gameOver = True
                 AIThinking = False
 
 
@@ -138,7 +135,9 @@ def main():
             print()
             print("-----White to move-----") if gs.whiteToMove else print("-----Black to move-----")
             validMoves = gs.getValidMoves()
-            moveMade = False  # set back to False
+            if not validMoves:  # if no valid moves for next turn then gameOver
+                gameOver = True
+            moveMade = False
 
 
         p.display.flip()  # updates the full display Surface to the screen.
