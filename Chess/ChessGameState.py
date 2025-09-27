@@ -26,7 +26,7 @@ class GameState:
         self.whiteToMove = True
         self.moveLog = []
 
-        self.pins, self.checks = [], []
+        self.pins, self.checks, self.inCheck = [], [], False
         self.checkMate, self.staleMate = False, False
 
         self.enpassantPossible = ()
