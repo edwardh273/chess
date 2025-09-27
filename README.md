@@ -5,6 +5,7 @@ Ensure you have created a python virtual env and pip installed the requirements.
 To play:
 1) In ChessMain.py set the whitePlayer and blackPlayer Booleans.  True = Human player.  False = AI player.  Two humans and two AIs can play against each other.
 2) In ChessAI.py set the difficulty of the AI by raising/lowering the AI player depth (WhiteDepth/BlackDepth).  Max depth is currently 4 before the engine takes so long the game is unplayable.
+3) When it is a human's turn, you can undo a move by pressing the 'z' key.  This will undo the last human player's move (as well as the last AI's move if playing an AI).
 
 
 ChessMain.py is the main driver for the game.
