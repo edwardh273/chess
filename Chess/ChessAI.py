@@ -44,7 +44,7 @@ def findBestMove(gs, validMoves, returnQueue):
     startTime = time.time()
     nextMove, counter = None, 0
     depth = WhiteDepth if gs.whiteToMove else BlackDepth
-    validMoves.sort(reverse=True, key=lambda move: pieceCapturedFunc(move, gs))
+    validMoves.sort(reverse=True, key=lambda move: moveSortAlgo(move, gs))
     bestScore = findMoveNegaMaxAlphaBeta(gs, validMoves, depth, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1, True if gs.whiteToMove else False)  # alpha = current max, so start lowest;  beta = current min so start hightest
     endTime = time.time()
     print(f"movesSearched: {counter}     maxScore: {bestScore:.3f}     Time: {endTime - startTime:.2f}")
@@ -55,12 +55,32 @@ def findBestMove(gs, validMoves, returnQueue):
 Function to sort valid moves before they are passed into alpha-beta pruning.
 Likely strongest moves should be searched first for better pruning efficiency
 """
-def pieceCapturedFunc(move, gameState):
+def moveSortAlgo(move, gameState):
     score = 0
+
+    # MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
     if move.pieceCaptured != "--":
-        score += pieceScore[move.pieceCaptured[1]]
-    if gameState.squareUnderAttack(move.startRow, move.startCol):
-        score += pieceScore[move.pieceMoved[1]]
+        # Prioritize capturing valuable pieces with less valuable pieces
+        score += 10 * pieceScore[move.pieceCaptured[1]] - pieceScore[move.pieceMoved[1]]
+
+    # Penalize moving pieces into attacked squares (unless it's a capture)
+    if gameState.squareUnderAttack(move.endRow, move.endCol):
+        if move.pieceCaptured == "--":
+            score -= pieceScore[move.pieceMoved[1]]
+        # If it's a capture, we already handled it with MVV-LVA
+
+    # Bonus for moving pieces away from attacked squares
+    if move.pieceCaptured == "--" and gameState.squareUnderAttack(move.startRow, move.startCol):
+        score += pieceScore[move.pieceMoved[1]] * 0.5
+
+    # Promotion bonus
+    if move.isPawnPromotion:
+        score += pieceScore['Q'] - pieceScore['P']
+
+    # Center control bonus (for non-capture moves)
+    if move.pieceCaptured == "--":
+        centerDistance = abs(3.5 - move.endRow) + abs(3.5 - move.endCol)
+        score += (7 - centerDistance) * 0.1
     return score
 
 
