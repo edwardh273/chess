@@ -318,12 +318,39 @@ class GameState:
     Determine if the enemy can attack the square r, c.  Returns True, False
     """
     def squareUnderAttack(self, r, c):
-        self.whiteToMove = not self.whiteToMove  # switch to black's perspective
-        oppMoves = self.getAllPossibleMoves()  # stores all possible opponents moves
-        self.whiteToMove = not self.whiteToMove  # switch turns back to white
-        for oppMove in oppMoves:
-            if oppMove.endRow == r and oppMove.endCol == c:
-                return True
+
+        enemyColor = 'b' if self.whiteToMove else 'w'
+
+        # check for knights
+        knightMoves = ((-1, -2), (-2, -1), (-2, 1), (-1, 2), (1, 2), (2, 1), (2, -1), (1, -2))
+        for m in knightMoves:
+            nr, nc = r + m[0], c + m[1]
+            if 0 <= nr <= 7 and 0 <= nc <= 7:
+                if self.board[nr][nc] == enemyColor + 'N':
+                    return True
+
+        # check for other pieces
+        directions = ((-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1))  # (col, row): l, r, u, d, lu, ru, ld, rd
+        for j in range(len(directions)):
+            d = directions[j]  # (1, 1)
+            for i in range(1, 8):  # up until the end of the board
+                endCol = c + d[0] * i
+                endRow = r + d[1] * i
+                if 0 <= endRow < 8 and 0 <= endCol < 8:
+                    endPiece = self.board[endRow][endCol]
+                    if endPiece[0] == enemyColor:
+                        piece = endPiece[1]
+                        # orthogonally  && piece == rook
+                        # diagonally && piece == bishop
+                        # 1 square away && piece == pawn
+                        # any direction & piece == queen
+                        # any direction 1 square away & piece == king
+                        if (0 <= j <= 3 and piece == 'R') or \
+                                (4 <= j <= 7 and piece == 'B') or \
+                                (i == 1 and piece == 'p' and ( (enemyColor == 'w' and 6 <= j <= 7) or (enemyColor == 'b' and 4 <= j <= 5 ) )) or \
+                                (piece == 'Q') or \
+                                (i == 1 and piece == 'K'):
+                            return True
         return False
 
 
