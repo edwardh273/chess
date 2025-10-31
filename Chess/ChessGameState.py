@@ -351,6 +351,10 @@ class GameState:
                                 (piece == 'Q') or \
                                 (i == 1 and piece == 'K'):
                             return True
+                        else:  # if enemy piece detected, but cannot attack, then it is blocking.
+                            break
+                    elif endPiece != '--':  # if friendly piece, then also blocking this direction.
+                        break
         return False
 
 
